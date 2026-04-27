@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLS House — Entrevistas Parceiros 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Text:ital,wght@1,400;1,600&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:       #001424;
+    --navy-mid:   #0d324f;
+    --blue-mid:   #285478;
+    --blue-light: #8ab0cf;
+    --blue-pale:  #cfe6f8;
+    --white:      #f5f3ef;
+    --white-dim:  rgba(245,243,239,0.65);
+    --white-faint:rgba(245,243,239,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+  }
+
+  /* ── SELECTOR ── */
+  .selector {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .selector-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 30% 60%, rgba(40,84,120,0.35), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 80% 30%, rgba(138,176,207,0.08), transparent 60%);
+  }
+  .selector-top-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue-pale), transparent);
+  }
+  .selector-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 700px;
+  }
+  .selector-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+  .selector-title {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: var(--white);
+  }
+  .selector-sub {
+    font-size: 15px;
+    color: var(--white-dim);
+    line-height: 1.7;
+    margin-bottom: 64px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .selector-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+  }
+  .selector-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--white-faint);
+    padding: 48px 36px;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  .selector-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--blue-pale);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .selector-card:hover { border-color: rgba(207,230,248,0.3); transform: translateY(-4px); }
+  .selector-card:hover::before { transform: scaleX(1); }
+  .card-initial {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: 52px;
+    font-weight: 400;
+    color: var(--blue-pale);
+    line-height: 1;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  .card-name {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .card-role {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .card-cta {
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-cta::after {
+    content: '→';
+    transition: transform 0.3s;
+  }
+  .selector-card:hover .card-cta::after { transform: translateX(4px); }
+
+  /* ── FORM PAGE ── */
+  .form-page {
+    display: none;
+    min-height: 100vh;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .form-page.active {
+    display: block;
+  }
+  .form-page.visible {
+    opacity: 1;
+  }
+
+  .form-header {
+    padding: 80px 60px 60px;
+    position: relative;
+    border-bottom: 1px solid var(--white-faint);
+    background: var(--navy-mid);
+  }
+  .form-header-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(40,84,120,0.25), transparent 70%);
+  }
+  .form-header-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+  }
+  .back-btn {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .back-btn:hover { color: var(--blue-pale); }
+  .back-btn::before { content: '←'; }
+
+  .form-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .form-name {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .form-intro {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--white-dim);
+    max-width: 560px;
+  }
+
+  /* ── FORM BODY ── */
+  .form-body {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 60px 120px;
+  }
+
+  .form-section-label {
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+    font-weight: 500;
+    margin-bottom: 48px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--white-faint);
+  }
+
+  .qa-block {
+    margin-bottom: 64px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+  .qa-block:nth-child(2) { animation-delay: 0.1s; }
+  .qa-block:nth-child(3) { animation-delay: 0.2s; }
+  .qa-block:nth-child(4) { animation-delay: 0.3s; }
+  .qa-block:nth-child(5) { animation-delay: 0.4s; }
+
+  .qa-number {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--blue-pale);
+    opacity: 0.5;
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+  .qa-question {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .qa-hint {
+    font-size: 12px;
+    color: var(--white-dim);
+    margin-bottom: 16px;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+  textarea {
+    width: 100%;
+    background: var(--navy-mid);
+    border: 1px solid var(--white-faint);
+    border-top: 2px solid var(--blue-mid);
+    color: var(--white);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.8;
+    padding: 24px 28px;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+    letter-spacing: 0.01em;
+  }
+  textarea::placeholder {
+    color: rgba(245,243,239,0.2);
+    font-style: italic;
+  }
+  textarea:focus {
+    border-color: rgba(207,230,248,0.4);
+    border-top-color: var(--blue-pale);
+    background: rgba(13,50,79,0.8);
+  }
+
+  /* ── SUBMIT ── */
+  .form-footer {
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--white-faint);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .form-note {
+    font-size: 13px;
+    color: var(--white-dim);
+    line-height: 1.6;
+    max-width: 360px;
+    opacity: 0.6;
+  }
+  .submit-btn {
+    background: var(--blue-pale);
+    color: var(--navy);
+    border: none;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .submit-btn:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+  }
+  .submit-btn:active { transform: translateY(0); }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px;
+    flex-direction: column;
+  }
+  .success-screen.active { display: flex; }
+  .success-icon {
+    font-size: 48px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .success-title {
+    font-family: 'Abril Text', serif;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 400;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.4s forwards;
+  }
+  .success-sub {
+    font-size: 16px;
+    color: var(--white-dim);
+    line-height: 1.7;
+    max-width: 440px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.6s forwards;
+  }
+
+  /* ── COPY AREA ── */
+  .copy-area {
+    margin-top: 48px;
+    background: var(--navy-mid);
+    border: 1px solid var(--white-faint);
+    border-top: 2px solid var(--blue-pale);
+    padding: 32px 40px;
+    text-align: left;
+    max-width: 640px;
+    width: 100%;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.8s forwards;
+  }
+  .copy-area-title {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .copy-responses {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--white-dim);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 24px;
+    background: none;
+    border: 1px solid var(--white-faint);
+    color: var(--blue-pale);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .copy-btn:hover { border-color: var(--blue-pale); color: var(--white); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .selector-cards { grid-template-columns: 1fr; }
+    .form-header { padding: 60px 30px 40px; }
+    .form-body { padding: 60px 30px 80px; }
+    .form-footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SELECTOR ══════════════ -->
+<div class="selector" id="selector">
+  <div class="selector-bg"></div>
+  <div class="selector-top-line"></div>
+  <div class="selector-content">
+    <p class="selector-eyebrow">Mentoring League Society House · 2026</p>
+    <h1 class="selector-title">Entrevistas<br>Parceiros</h1>
+    <p class="selector-sub">Suas respostas farão parte do Book oficial da Mentoring League Society House. Escolha abaixo para começar.</p>
+    <div class="selector-cards">
+      <div class="selector-card" onclick="openForm('carol')">
+        <div class="card-initial">C</div>
+        <div class="card-name">Carol Roxo</div>
+        <div class="card-role">Gastronomia</div>
+        <div class="card-cta">Responder</div>
+      </div>
+      <div class="selector-card" onclick="openForm('thiago')">
+        <div class="card-initial">T</div>
+        <div class="card-name">Thiago</div>
+        <div class="card-role">LED · LED Light MKT</div>
+        <div class="card-cta">Responder</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CAROL FORM ══════════════ -->
+<div class="form-page" id="form-carol">
+  <div class="form-header">
+    <div class="form-header-bg"></div>
+    <div class="form-header-inner">
+      <button class="back-btn" onclick="goBack()">Voltar</button>
+      <p class="form-eyebrow">Gastronomia · Parceiros MLS House</p>
+      <h2 class="form-name">Carol Roxo</h2>
+      <p class="form-intro">Suas respostas farão parte do Book oficial da Mentoring League Society House 2026. Não há resposta certa ou errada — escreva com a naturalidade e o olhar de quem vive isso na prática.</p>
+    </div>
+  </div>
+  <div class="form-body" id="body-carol">
+            <div class="form-section-label">10 perguntas · Responda com liberdade</div>
+
+        <div class="qa-block">
+          <div class="qa-number">01</div>
+          <div class="qa-question">Conta um pouco da sua trajetória. Como você chegou à gastronomia de eventos — e qual foi o momento em que percebeu que era isso que queria fazer de verdade?</div>
+          <div class="qa-hint">Pode ser uma história, um projeto marcante, uma virada de chave.</div>
+          <textarea id="carol-q1" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">02</div>
+          <div class="qa-question">Como você descreveria seu estilo de trabalho e sua identidade gastronômica? O que é inegociável para você em qualquer projeto?</div>
+          <div class="qa-hint">Pense na sua assinatura, no que te diferencia no mercado.</div>
+          <textarea id="carol-q2" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">03</div>
+          <div class="qa-question">Você tem uma trajetória sólida em eventos corporativos de alto padrão. O que esse universo te ensinou sobre o papel da gastronomia — e o que ainda surpreende as pessoas quando experimentam de perto?</div>
+          <div class="qa-hint">Fique à vontade para falar sobre sua visão, casos reais ou aprendizados.</div>
+          <textarea id="carol-q3" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">04</div>
+          <div class="qa-question">Como você enxerga o mercado de gastronomia para eventos hoje? Quais são as principais tendências e o que você acredita que veio para ficar?</div>
+          <div class="qa-hint">Fale sobre o mercado, o comportamento dos clientes, o que mudou nos últimos anos.</div>
+          <textarea id="carol-q4" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">05</div>
+          <div class="qa-question">Um evento de negócios tem um ritmo muito específico. Quais são os maiores desafios de entregar qualidade do welcome coffee até o coquetel de encerramento — sem perder consistência em nenhum momento?</div>
+          <div class="qa-hint">Pense nos bastidores, na logística, nos detalhes que fazem a diferença.</div>
+          <textarea id="carol-q5" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">06</div>
+          <div class="qa-question">Qual foi o projeto mais desafiador da sua carreira — e o que ele te ensinou sobre você mesma e sobre o seu trabalho?</div>
+          <div class="qa-hint">Pode ser um evento grande, uma situação inesperada, um cliente difícil.</div>
+          <textarea id="carol-q6" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">07</div>
+          <div class="qa-question">Existe uma diferença entre alimentar e criar uma experiência. Como você traduz isso na prática — e o que muda quando o espaço tem a infraestrutura certa para te apoiar?</div>
+          <div class="qa-hint">Pode mencionar a cozinha industrial, a bancada gourmet, o espaço da House.</div>
+          <textarea id="carol-q7" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">08</div>
+          <div class="qa-question">O que te inspira fora da gastronomia? Existe alguma área, pessoa ou referência que influencia diretamente a forma como você cria e entrega seu trabalho?</div>
+          <div class="qa-hint">Pode ser arte, arquitetura, viagens, pessoas que admira — qualquer coisa que alimente sua criatividade.</div>
+          <textarea id="carol-q8" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">09</div>
+          <div class="qa-question">O que significa para você fazer parte do ecossistema da Mentoring League Society — e como você enxerga essa parceria com a House?</div>
+          <div class="qa-hint">Fale sobre o que te atraiu nesse projeto e o que espera construir juntos.</div>
+          <textarea id="carol-q9" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">10</div>
+          <div class="qa-question">Para quem vai realizar um evento na Mentoring League Society House: o que a gastronomia entrega que vai além da comida — e que faz as pessoas saírem com uma memória diferente do dia?</div>
+          <div class="qa-hint">Uma resposta que conclua bem sua participação no Book.</div>
+          <textarea id="carol-q10" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="form-footer">
+      <p class="form-note">Ao enviar, suas respostas serão exibidas nesta mesma página para você revisar e copiar.</p>
+      <button class="submit-btn" onclick="submitForm('carol')">Enviar respostas</button>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-carol">
+    <div class="success-icon">✦</div>
+    <h3 class="success-title">Obrigado, Carol.</h3>
+    <p class="success-sub">Suas respostas foram registradas e farão parte do Book da Mentoring League Society House 2026.</p>
+    <div class="copy-area">
+      <div class="copy-area-title">Suas respostas</div>
+      <div class="copy-responses" id="carol-responses"></div>
+      <button class="copy-btn" onclick="copyResponses('carol-responses')">Copiar respostas</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ THIAGO FORM ══════════════ -->
+<div class="form-page" id="form-thiago">
+  <div class="form-header">
+    <div class="form-header-bg"></div>
+    <div class="form-header-inner">
+      <button class="back-btn" onclick="goBack()">Voltar</button>
+      <p class="form-eyebrow">LED · Parceiros MLS House</p>
+      <h2 class="form-name">Thiago</h2>
+      <p class="form-intro">Suas respostas farão parte do Book oficial da Mentoring League Society House 2026. Não há resposta certa ou errada — escreva com a naturalidade e o olhar de quem vive isso na prática.</p>
+    </div>
+  </div>
+  <div class="form-body" id="body-thiago">
+            <div class="form-section-label">10 perguntas · Responda com liberdade</div>
+
+        <div class="qa-block">
+          <div class="qa-number">01</div>
+          <div class="qa-question">Conta um pouco da sua trajetória. Como você chegou ao mercado de LED para eventos — e qual foi o momento em que percebeu que era nisso que queria se aprofundar?</div>
+          <div class="qa-hint">Pode ser uma história, um projeto marcante, uma virada de chave.</div>
+          <textarea id="thiago-q1" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">02</div>
+          <div class="qa-question">Como você descreveria a identidade da LED Light MKT? O que define o trabalho de vocês — e o que é inegociável em qualquer projeto?</div>
+          <div class="qa-hint">Pense na assinatura da empresa, no que diferencia vocês no mercado.</div>
+          <textarea id="thiago-q2" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">03</div>
+          <div class="qa-question">Você tem uma experiência extensa com eventos corporativos de alto nível. O que esse mercado te ensinou sobre o uso do LED — e o que ainda surpreende quem experimenta de verdade?</div>
+          <div class="qa-hint">Fique à vontade para falar sobre sua visão, casos reais ou aprendizados.</div>
+          <textarea id="thiago-q3" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">04</div>
+          <div class="qa-question">Como você enxerga o mercado de LED e tecnologia visual para eventos hoje? O que mudou nos últimos anos e o que você acredita que ainda vai transformar o setor?</div>
+          <div class="qa-hint">Fale sobre tendências, novas tecnologias, comportamento do mercado.</div>
+          <textarea id="thiago-q4" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">05</div>
+          <div class="qa-question">Operar um auditório para 200 pessoas e um estúdio imersivo com LED curvo no mesmo espaço são desafios muito distintos. Quais são as complexidades técnicas e criativas de entregar os dois com o mesmo nível de excelência?</div>
+          <div class="qa-hint">Pense nos bastidores, na operação técnica, no que exige mais atenção.</div>
+          <textarea id="thiago-q5" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">06</div>
+          <div class="qa-question">Qual foi o projeto mais desafiador da sua carreira — e o que ele te ensinou sobre você e sobre o seu trabalho?</div>
+          <div class="qa-hint">Pode ser um evento grande, uma situação inesperada, uma entrega difícil.</div>
+          <textarea id="thiago-q6" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">07</div>
+          <div class="qa-question">Um evento corporativo de alto padrão exige uma leitura diferente de qualquer outro contexto. Como o LED contribui para criar a atmosfera certa — e o que acontece quando essa entrega é feita com precisão?</div>
+          <div class="qa-hint">Pode falar sobre o impacto visual, a percepção do público, a diferença na experiência.</div>
+          <textarea id="thiago-q7" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">08</div>
+          <div class="qa-question">O que te inspira fora do universo de eventos e tecnologia? Existe alguma área, pessoa ou referência que influencia diretamente a forma como você pensa e cria?</div>
+          <div class="qa-hint">Pode ser arquitetura, design, arte, pessoas que admira — qualquer coisa que alimente sua visão.</div>
+          <textarea id="thiago-q8" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">09</div>
+          <div class="qa-question">O que significa para você e para a LED Light MKT fazer parte do ecossistema da Mentoring League Society — e como você enxerga essa parceria com a House?</div>
+          <div class="qa-hint">Fale sobre o que te atraiu nesse projeto e o que espera construir juntos.</div>
+          <textarea id="thiago-q9" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="qa-block">
+          <div class="qa-number">10</div>
+          <div class="qa-question">Para quem vai realizar um evento na Mentoring League Society House: o que o LED entrega que transforma a percepção do espaço — e que as pessoas levam como memória mesmo sem saber nomear?</div>
+          <div class="qa-hint">Uma resposta que conclua bem sua participação no Book.</div>
+          <textarea id="thiago-q10" placeholder="Sua resposta..." rows="6"></textarea>
+        </div>
+
+        <div class="form-footer">
+      <p class="form-note">Ao enviar, suas respostas serão exibidas nesta mesma página para você revisar e copiar.</p>
+      <button class="submit-btn" onclick="submitForm('thiago')">Enviar respostas</button>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-thiago">
+    <div class="success-icon">✦</div>
+    <h3 class="success-title">Obrigado, Thiago.</h3>
+    <p class="success-sub">Suas respostas foram registradas e farão parte do Book da Mentoring League Society House 2026.</p>
+    <div class="copy-area">
+      <div class="copy-area-title">Suas respostas</div>
+      <div class="copy-responses" id="thiago-responses"></div>
+      <button class="copy-btn" onclick="copyResponses('thiago-responses')">Copiar respostas</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzdyqlbj';
+
+  const questions = {
+        carol: [
+      'Conta um pouco da sua trajetória. Como você chegou à gastronomia de eventos — e qual foi o momento em que percebeu que era isso que queria fazer de verdade?',
+      'Como você descreveria seu estilo de trabalho e sua identidade gastronômica? O que é inegociável para você em qualquer projeto?',
+      'Você tem uma trajetória sólida em eventos corporativos de alto padrão. O que esse universo te ensinou sobre o papel da gastronomia — e o que ainda surpreende as pessoas quando experimentam de perto?',
+      'Como você enxerga o mercado de gastronomia para eventos hoje? Quais são as principais tendências e o que você acredita que veio para ficar?',
+      'Um evento de negócios tem um ritmo muito específico. Quais são os maiores desafios de entregar qualidade do welcome coffee até o coquetel de encerramento — sem perder consistência em nenhum momento?',
+      'Qual foi o projeto mais desafiador da sua carreira — e o que ele te ensinou sobre você mesma e sobre o seu trabalho?',
+      'Existe uma diferença entre alimentar e criar uma experiência. Como você traduz isso na prática — e o que muda quando o espaço tem a infraestrutura certa para te apoiar?',
+      'O que te inspira fora da gastronomia? Existe alguma área, pessoa ou referência que influencia diretamente a forma como você cria e entrega seu trabalho?',
+      'O que significa para você fazer parte do ecossistema da Mentoring League Society — e como você enxerga essa parceria com a House?',
+      'Para quem vai realizar um evento na Mentoring League Society House: o que a gastronomia entrega que vai além da comida — e que faz as pessoas saírem com uma memória diferente do dia?'
+    ],
+        thiago: [
+      'Conta um pouco da sua trajetória. Como você chegou ao mercado de LED para eventos — e qual foi o momento em que percebeu que era nisso que queria se aprofundar?',
+      'Como você descreveria a identidade da LED Light MKT? O que define o trabalho de vocês — e o que é inegociável em qualquer projeto?',
+      'Você tem uma experiência extensa com eventos corporativos de alto nível. O que esse mercado te ensinou sobre o uso do LED — e o que ainda surpreende quem experimenta de verdade?',
+      'Como você enxerga o mercado de LED e tecnologia visual para eventos hoje? O que mudou nos últimos anos e o que você acredita que ainda vai transformar o setor?',
+      'Operar um auditório para 200 pessoas e um estúdio imersivo com LED curvo no mesmo espaço são desafios muito distintos. Quais são as complexidades técnicas e criativas de entregar os dois com o mesmo nível de excelência?',
+      'Qual foi o projeto mais desafiador da sua carreira — e o que ele te ensinou sobre você e sobre o seu trabalho?',
+      'Um evento corporativo de alto padrão exige uma leitura diferente de qualquer outro contexto. Como o LED contribui para criar a atmosfera certa — e o que acontece quando essa entrega é feita com precisão?',
+      'O que te inspira fora do universo de eventos e tecnologia? Existe alguma área, pessoa ou referência que influencia diretamente a forma como você pensa e cria?',
+      'O que significa para você e para a LED Light MKT fazer parte do ecossistema da Mentoring League Society — e como você enxerga essa parceria com a House?',
+      'Para quem vai realizar um evento na Mentoring League Society House: o que o LED entrega que transforma a percepção do espaço — e que as pessoas levam como memória mesmo sem saber nomear?'
+    ]
+  };
+
+  const names = { carol: 'Carol Roxo', thiago: 'Thiago — LED Light MKT' };
+
+  function openForm(person) {
+    document.getElementById('selector').style.display = 'none';
+    const page = document.getElementById('form-' + person);
+    page.classList.add('active');
+    setTimeout(() => page.classList.add('visible'), 10);
+    window.scrollTo(0, 0);
+  }
+
+  function goBack() {
+    document.querySelectorAll('.form-page').forEach(p => {
+      p.classList.remove('active', 'visible');
+    });
+    document.getElementById('selector').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
+
+  async function submitForm(person) {
+    const qs = questions[person];
+    const answers = qs.map((q, i) => {
+      return document.getElementById(person + '-q' + (i+1)).value.trim() || '(sem resposta)';
+    });
+
+    const empty = answers.every(a => a === '(sem resposta)');
+    if (empty) {
+      alert('Por favor, responda ao menos uma pergunta antes de enviar.');
+      return;
+    }
+
+    // Disable button and show loading
+    const btn = document.querySelector('#form-' + person + ' .submit-btn');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    // Build payload for Formspree
+    const payload = {
+      _subject: 'Book MLS House — Resposta de ' + names[person],
+      Parceiro: names[person],
+    };
+    qs.forEach((q, i) => {
+      payload['Pergunta ' + (i+1)] = q;
+      payload['Resposta ' + (i+1)] = answers[i];
+    });
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        // Build readable response text for display
+        let text = '';
+        qs.forEach((q, i) => {
+          text += String(i+1).padStart(2,'0') + '. ' + q + '\n\n';
+          text += answers[i] + '\n\n';
+          text += '────────────────────────────────────────────────────────────\n\n';
+        });
+        document.getElementById(person + '-responses').textContent = text;
+        document.getElementById('body-' + person).style.display = 'none';
+        document.getElementById('success-' + person).classList.add('active');
+        window.scrollTo(0, 0);
+      } else {
+        btn.textContent = 'Enviar respostas';
+        btn.disabled = false;
+        alert('Houve um problema ao enviar. Tente novamente.');
+      }
+    } catch(e) {
+      btn.textContent = 'Enviar respostas';
+      btn.disabled = false;
+      alert('Erro de conexão. Verifique sua internet e tente novamente.');
+    }
+  }
+
+  function copyResponses(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      const orig = btn.textContent;
+      btn.textContent = 'Copiado ✓';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+</script>
+</body>
+</html>
